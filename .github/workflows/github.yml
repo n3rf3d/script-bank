@@ -20,7 +20,6 @@ jobs:
 notify:
 runs-on: ubuntu-latest
 
-```
 steps:
   - name: Checkout repo
     uses: actions/checkout@v4
@@ -29,6 +28,7 @@ steps:
     shell: bash
     env:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
     run: |
       REPO="${{ github.repository }}"
       EVENT="${{ github.event_name }}"
@@ -162,8 +162,6 @@ steps:
       elif [ "$EVENT" = "deployment_status" ]; then
         COLOR=2067276
         TITLE="📡 Deployment Status"
-        URL="https://github.com/${REPO}"
-        DESC="Deployment status updated"
         REF="${{ github.event.deployment_status.state }}"
         EXTRA="Deployment update"
         CONTENT="📡 Deployment status change"
@@ -255,4 +253,3 @@ steps:
         -H "Content-Type: application/json" \
         -d "$JSON_PAYLOAD" \
         "$DISCORD_WEBHOOK"
-```
