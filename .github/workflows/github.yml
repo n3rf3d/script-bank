@@ -1,24 +1,24 @@
-name: Discord Notifications - Nerfed
+name: Discord Notifications
 
 on:
-push:
-pull_request:
-pull_request_review:
-pull_request_review_comment:
-issues:
-issue_comment:
-release:
-watch:
-create:
-delete:
-workflow_run:
-deployment:
-deployment_status:
-milestone:
+  push:
+  pull_request:
+  pull_request_review:
+  pull_request_review_comment:
+  issues:
+  issue_comment:
+  release:
+  watch:
+  create:
+  delete:
+  workflow_run:
+  deployment:
+  deployment_status:
+  milestone:
 
 jobs:
-notify:
-runs-on: ubuntu-latest
+  notify:
+    runs-on: ubuntu-latest
 
 steps:
   - name: Checkout repo
