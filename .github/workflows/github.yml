@@ -21,7 +21,7 @@ jobs:
 notify:
 runs-on: ubuntu-latest
 
-```
+
 steps:
   - name: Checkout repo
     uses: actions/checkout@v4
@@ -298,4 +298,3 @@ steps:
         -H "Content-Type: application/json" \
         -d "$JSON_PAYLOAD" \
         "$DISCORD_WEBHOOK"
-```
