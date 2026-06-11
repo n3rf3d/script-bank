@@ -15,13 +15,12 @@ workflow_run:
 deployment:
 deployment_status:
 milestone:
-label:
 
 jobs:
 notify:
 runs-on: ubuntu-latest
 
-
+```
 steps:
   - name: Checkout repo
     uses: actions/checkout@v4
@@ -30,7 +29,6 @@ steps:
     shell: bash
     env:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-
     run: |
       REPO="${{ github.repository }}"
       EVENT="${{ github.event_name }}"
@@ -47,178 +45,137 @@ steps:
       URL="https://github.com/${REPO}"
       REF="-"
       EXTRA="N/A"
-
       CONTENT="📢 Repository activity by ${ACTOR}"
 
-      # PUSH
       if [ "$EVENT" = "push" ]; then
         COLOR=3066993
         TITLE="🚀 New Push"
-
         COMMIT_MSG="${{ github.event.head_commit.message }}"
         COMMIT_SHA="${{ github.sha }}"
         SHORT_SHA=${COMMIT_SHA:0:7}
         BRANCH="${{ github.ref_name }}"
-
         URL="https://github.com/${REPO}/commit/${COMMIT_SHA}"
         DESC="${COMMIT_MSG}"
         REF="${SHORT_SHA}"
         EXTRA="🌿 Branch: ${BRANCH}"
         CONTENT="🚀 New commit by ${ACTOR}"
 
-      # PULL REQUEST
       elif [ "$EVENT" = "pull_request" ]; then
         COLOR=15105570
         TITLE="🔀 Pull Request (${{ github.event.action }})"
-
         URL="${{ github.event.pull_request.html_url }}"
         DESC="${{ github.event.pull_request.title }}"
         REF="PR #${{ github.event.pull_request.number }}"
         EXTRA="📌 Status: ${{ github.event.pull_request.state }}"
         CONTENT="🔀 Pull request activity"
 
-      # PR REVIEW
       elif [ "$EVENT" = "pull_request_review" ]; then
         COLOR=15844367
         TITLE="📝 PR Review (${{ github.event.action }})"
-
         URL="${{ github.event.pull_request.html_url }}"
         DESC="Review submitted by ${ACTOR}"
         REF="PR #${{ github.event.pull_request.number }}"
         EXTRA="Review State: ${{ github.event.review.state }}"
         CONTENT="📝 Pull request review"
 
-      # PR REVIEW COMMENT
       elif [ "$EVENT" = "pull_request_review_comment" ]; then
         COLOR=15844367
         TITLE="💬 PR Review Comment"
-
         URL="${{ github.event.comment.html_url }}"
         DESC="${{ github.event.comment.body }}"
         REF="PR #${{ github.event.pull_request.number }}"
         EXTRA="Comment added"
         CONTENT="💬 Pull request review comment"
 
-      # ISSUES
       elif [ "$EVENT" = "issues" ]; then
         COLOR=15158332
         TITLE="🐛 Issue (${{ github.event.action }})"
-
         URL="${{ github.event.issue.html_url }}"
         DESC="${{ github.event.issue.title }}"
         REF="Issue #${{ github.event.issue.number }}"
         EXTRA="Action: ${{ github.event.action }}"
         CONTENT="🐛 Issue activity"
 
-      # ISSUE COMMENTS
       elif [ "$EVENT" = "issue_comment" ]; then
         COLOR=1752220
         TITLE="💬 Issue Comment"
-
         URL="${{ github.event.comment.html_url }}"
         DESC="${{ github.event.issue.title }}"
         REF="Issue #${{ github.event.issue.number }}"
         EXTRA="Comment by ${ACTOR}"
         CONTENT="💬 New issue comment"
 
-      # RELEASES
       elif [ "$EVENT" = "release" ]; then
         COLOR=10181046
         TITLE="📦 Release (${{ github.event.action }})"
-
         URL="${{ github.event.release.html_url }}"
         DESC="${{ github.event.release.name }}"
         REF="${{ github.event.release.tag_name }}"
         EXTRA="Release published"
         CONTENT="📦 Repository release"
 
-      # STARS
       elif [ "$EVENT" = "watch" ]; then
         COLOR=15844367
         TITLE="⭐ Repository Starred"
-
         URL="https://github.com/${REPO}"
         DESC="${ACTOR} starred the repository"
         REF="Star"
         EXTRA="⭐ New Stargazer"
         CONTENT="⭐ Repository received a new star"
 
-      # BRANCH/TAG CREATED
       elif [ "$EVENT" = "create" ]; then
         COLOR=5763719
         TITLE="🌱 Created"
-
         URL="https://github.com/${REPO}"
         DESC="${{ github.event.ref_type }} created"
         REF="${{ github.event.ref }}"
         EXTRA="Created by ${ACTOR}"
         CONTENT="🌱 New repository object"
 
-      # BRANCH/TAG DELETED
       elif [ "$EVENT" = "delete" ]; then
         COLOR=15548997
         TITLE="🗑 Deleted"
-
         URL="https://github.com/${REPO}"
         DESC="${{ github.event.ref_type }} deleted"
         REF="${{ github.event.ref }}"
         EXTRA="Deleted by ${ACTOR}"
         CONTENT="🗑 Repository object deleted"
 
-      # WORKFLOW RUN
       elif [ "$EVENT" = "workflow_run" ]; then
         COLOR=3447003
         TITLE="⚙ Workflow Run"
-
         URL="${{ github.event.workflow_run.html_url }}"
         DESC="${{ github.event.workflow_run.name }}"
         REF="${{ github.event.workflow_run.conclusion }}"
         EXTRA="Status: ${{ github.event.workflow_run.status }}"
         CONTENT="⚙ Workflow activity"
 
-      # DEPLOYMENT
       elif [ "$EVENT" = "deployment" ]; then
         COLOR=2067276
         TITLE="🚀 Deployment"
-
         URL="https://github.com/${REPO}"
         DESC="Deployment created"
         REF="Deployment"
         EXTRA="Triggered by ${ACTOR}"
         CONTENT="🚀 Deployment activity"
 
-      # DEPLOYMENT STATUS
       elif [ "$EVENT" = "deployment_status" ]; then
         COLOR=2067276
         TITLE="📡 Deployment Status"
-
         URL="https://github.com/${REPO}"
         DESC="Deployment status updated"
         REF="${{ github.event.deployment_status.state }}"
         EXTRA="Deployment update"
         CONTENT="📡 Deployment status change"
 
-      # MILESTONE
       elif [ "$EVENT" = "milestone" ]; then
         COLOR=7419530
         TITLE="🎯 Milestone (${{ github.event.action }})"
-
         URL="${{ github.event.milestone.html_url }}"
         DESC="${{ github.event.milestone.title }}"
         REF="Milestone"
         EXTRA="Action: ${{ github.event.action }}"
         CONTENT="🎯 Milestone activity"
-
-      # LABEL
-      elif [ "$EVENT" = "label" ]; then
-        COLOR=7419530
-        TITLE="🏷 Label (${{ github.event.action }})"
-
-        URL="https://github.com/${REPO}/labels"
-        DESC="${{ github.event.label.name }}"
-        REF="Label"
-        EXTRA="Action: ${{ github.event.action }}"
-        CONTENT="🏷 Label activity"
       fi
 
       FOOTERS=(
@@ -298,3 +255,4 @@ steps:
         -H "Content-Type: application/json" \
         -d "$JSON_PAYLOAD" \
         "$DISCORD_WEBHOOK"
+```
